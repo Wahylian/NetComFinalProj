@@ -22,3 +22,9 @@ To run every function of the python file just run the program and chose the want
 2. in the folder where you have main.py and WiresharkRecordingSpecialCSV, create a folder called: 'WiresharkRecordings'<br/>
 3. enter that folder and place the 5 pcapng recordings<br/>
 4. run the code :)
+
+<h2>Notes:</h2>
+Matplotlib might cause some issues on windows when attempting to run the code,
+* The simplest solution is, in Pycharm go to File | Settings | Tools | Python Plots | Show plots in tool window and disable that.<br/>
+   Though it might break the look of the plots a bit as they could get smudged
+* if that happens, attempt to roll it back to versions 3.7.0 or 3.5.3 
