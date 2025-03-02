@@ -6,6 +6,7 @@
 2. a python project with the ability to generate 12 different graphs based on these csv files, and the ability to generate the csv files from the original pcapng files<br/>
 3. a link to the original pcapng files, which you will have to download from google drive, as they are too heavy to upload to github even when compressed:<br/>
    the link is: https://drive.google.com/drive/folders/1aF9--1N4EBlxPKddHXaTYQeovzDNOXpL?usp=sharing<br/>
+4. a folder with a png of each plot
 
 <h2>Instructions to run the code:</h2>
 To run every function of the python file just run the program and chose the wanted option.
@@ -26,5 +27,6 @@ To run every function of the python file just run the program and chose the want
 <h2>Notes:</h2>
 Matplotlib might cause some issues on windows when attempting to run the code,
 * The simplest solution is, in Pycharm go to File | Settings | Tools | Python Plots | Show plots in tool window and disable that.<br/>
-   Though it might break the look of the plots a bit as they could get smudged
+   Though it might break the look of the plots a bit as they could get smudged when they are not shown inside of the pycharm interface<br/>
+   for a better picture of the plots, a folder with their pictures is provided<br/>
 * if that happens, attempt to roll it back to versions 3.7.0 or 3.5.3 
