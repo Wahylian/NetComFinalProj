@@ -218,7 +218,7 @@ def packet_length_distribution(dfs: list[pd.DataFrame], df_names: list[str]):
         # using the log function on the data to remove the tail
         sns.kdeplot(np.log1p(df['packet_length']), color=colors[i], label=df_names[i], ax=ax, alpha=0.6)
 
-    ax.set_xlabel("log(Packet Length+1)")
+    ax.set_xlabel("ln(Packet Length+1)")
     ax.set_ylabel("Density")
     ax.set_title("Packet Size Distribution")
     ax.legend()
@@ -231,7 +231,7 @@ def tcp_to_udp_comparison(dfs: list[pd.DataFrame], df_names: list[str]):
         sns.histplot(np.log1p(tcp_df["packet_length"]), bins=30, color='blue', ax=axes[i], label='UDP', stat='density')
         udp_df = df.dropna(subset=['udp_length']) # only udp packets will have this value
         sns.histplot(np.log1p(udp_df['packet_length']), bins=30, color='red', ax=axes[i], label='TCP', stat='density')
-        axes[i].set_xlabel("log(packet length+1)") # to create better scaling
+        axes[i].set_xlabel("ln(packet length+1)") # to create better scaling
         axes[i].set_title(f"Comparison of TCP vs UDP Packet Length in {df_names[i]}")
         axes[i].legend()
 
