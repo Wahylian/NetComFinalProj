@@ -37,6 +37,6 @@ To run every function of the python file just run the program and chose the want
    for a better picture of the plots, a folder with their pictures is provided (in /res/)<br/>
 * Another solution is, attempt to roll matplotlib back to versions 3.7.0 or 3.5.3 <br/>
 2. Our LinkedIn Profiles are:
-* Ido: linkedin.com/in/ido-ron-35b606354
-* Shachar: 
+* Ido: https://www.linkedin.com/in/ido-ron-35b606354 <br/>
+* Shachar: <br/>
 * Lidor: https://www.linkedin.com/in/lidor-ayhoni-a71826266
