@@ -17,6 +17,58 @@ import seaborn as sns
 
 colors = ['blue', 'red', 'green', 'orange', 'purple'] # colors for graphs
 
+def create_special_df(cap: ps.FileCapture) -> pd.DataFrame:
+    """
+    Creates a df with the following columns:
+    1. packet size
+    2. timestamp
+    3 .a hashed 4 tuple of the following fields:
+        src_ip
+        dst_ip
+        src_port
+        dst_port
+    This Df will simulate what the potential attacker knows about the traffic
+    :param cap:
+    :return: the df
+    """
+    packet_data = []
+    count_packets = 0
+
+    for packet in cap:
+        if count_packets % 100 == 0:
+            print(f"{count_packets} packets processed")
+
+        # the relevant packet information will be saved in the dict
+        packet_info = {}
+        try:
+            # getting the timestamp
+            packet_info['timestamp'] = packet.sniff_timestamp
+            # getting the size of the packet
+            packet_info['packet_length'] = packet.length
+
+            # getting the rest of the required information
+            src_ip = packet.ip.src
+            dst_ip = packet.ip.dst
+
+            # the packet's src port and dst port are in its transport layer
+            protocol = packet.transport_layer
+            src_port = packet[protocol].srcport
+            dst_port = packet[protocol].dstport
+
+            # creating the 4-tuple
+            info = (src_ip, dst_ip, src_port, dst_port)
+            packet_info['four_tuple'] = str(hash(info))
+
+            # adds packet_info to list
+            packet_data.append(packet_info)
+            count_packets += 1
+        except AttributeError:
+            pass # skips problematic packets
+
+    df = pd.DataFrame(packet_data)
+    return df
+
+
 def create_df(cap: ps.FileCapture) -> pd.DataFrame:
     """
     creates a df from the provided cap file
@@ -24,7 +76,7 @@ def create_df(cap: ps.FileCapture) -> pd.DataFrame:
     :return: returns the df
     """
     packet_data = []
-    count_packets =0
+    count_packets = 0
 
     for packet in cap:
         if count_packets % 100 == 0:
@@ -112,9 +164,7 @@ def create_df(cap: ps.FileCapture) -> pd.DataFrame:
             # adds listing to list
             packet_data.append(packet_info)
             count_packets += 1
-        except AttributeError as errno:
-            print("failed")
-            print(errno)
+        except AttributeError:
             pass # on error skips problematic packet
 
     # converting all files into a dataframe
@@ -122,6 +172,12 @@ def create_df(cap: ps.FileCapture) -> pd.DataFrame:
     return df
 
 def save_to_csv(df: pd.DataFrame, df_name: str):
+    """
+    saves the df as a csv file based on the provided name
+    :param df:
+    :param df_name:
+    :return:
+    """
     df.to_csv(f"WiresharkRecordingSpecialCSV/{df_name}.csv")
 
 def create_csv_from_pcapngs():
@@ -155,6 +211,14 @@ def create_csv_from_pcapngs():
     zoom_df = create_df(zoom_pcap)
     save_to_csv(zoom_df, "zoom")
 
+    # getting the recording for Question 4 Set up:
+    print("Creating Q4 Recording and saving it...")
+    q4_pcap = ps.FileCapture("WiresharkRecordings/Q4Traffic.pcapng")
+    # creating the special dataframe
+    q4_df = create_special_df(q4_pcap)
+    save_to_csv(q4_df, "q4")
+
+
 def packet_number_over_time(dfs:list[pd.DataFrame], df_names: list[str]):
     """
     creates an area gaining graph for amounts of packets over time for each data frame
@@ -175,6 +239,12 @@ def packet_number_over_time(dfs:list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def ttl_distribution(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    Creates a graph showing the ttl distribution of packets in each df
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, ax = plt.subplots(figsize=(20,4))
     for i, df in enumerate(dfs):
         sns.kdeplot(df['ip_ttl'], color=colors[i], label=df_names[i] ,ax=ax)
@@ -186,7 +256,12 @@ def ttl_distribution(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def window_size_over_time(dfs: list[pd.DataFrame], df_names: list[str]):
-
+    """
+    Creates a graph for each df showing the window size of their tcp packets over time
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, axes = plt.subplots(1, 5, figsize=(40,6), sharey=True)
 
     for i, df in enumerate(dfs):
@@ -200,6 +275,12 @@ def window_size_over_time(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def quic_packet_length_distribution(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    Creates a graph showing the quic packet length distribution of each df
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, ax = plt.subplots(figsize=(8,5))
     for i, df in enumerate(dfs):
         if 'quic_length' in df.columns:
@@ -213,6 +294,12 @@ def quic_packet_length_distribution(dfs: list[pd.DataFrame], df_names: list[str]
     plt.show()
 
 def packet_length_distribution(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    Creates a graph showing the packet length distribution of each df
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, ax = plt.subplots(figsize=(8,5))
     for i, df in enumerate(dfs):
         # using the log function on the data to remove the tail
@@ -225,6 +312,13 @@ def packet_length_distribution(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def tcp_to_udp_comparison(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    Creates a graph for each df comparing the frequency and size of the udp and tcp packets
+    they are using
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, axes = plt.subplots(1, 5, figsize=(30,5))
     for i, df in enumerate(dfs):
         tcp_df = df.dropna(subset=['tcp_window_size']) # only tcp packets will have this value
@@ -241,6 +335,13 @@ def tcp_to_udp_comparison(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def tlp_percentages(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    creates a pie chart for each df based on the usage percentage for each Transport Layer Protocol (TLS)
+    used in it
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, axes = plt.subplots(5, 1, figsize=(7,20))
     for i,df in enumerate(dfs):
         # counts occurrences for each protocol
@@ -261,6 +362,14 @@ def tlp_percentages(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def encryption_protocols_percentages(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    creates a pie chart for each df based on how much of the data was sent using
+    a transport layer protocol that automatically encrypts the data
+    (the percentile usage of TLS protocols and QUIC)
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     fig, axes = plt.subplots(5, 1, figsize=(7, 20))
     for i, df in enumerate(dfs):
         # counts occurrences for how many packets use encrypted protocols and how many don't
@@ -283,10 +392,22 @@ def encryption_protocols_percentages(dfs: list[pd.DataFrame], df_names: list[str
     plt.show()
 
 def filter_low_freq_ip(ip_counts, threshold):
+    """
+    filters low frequency IPs (IPs that weren't used a lot)
+    :param ip_counts:
+    :param threshold:
+    :return:
+    """
     # makes sure the ip count must appear at least threshold times
     return ip_counts[ip_counts >= threshold]
 
 def src_ip_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    a bar graph showing the frequency of each source IP
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     ip_counts = []
     threshold = 100 # there are a lot of packets
     # count the occurrences for each source ip in each df
@@ -305,6 +426,12 @@ def src_ip_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def dst_ip_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    a bar graph showing the frequency of each destination IP
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     ip_counts = []
     threshold = 100  # there are a lot of packets
     # count the occurrences for each source ip in each df
@@ -323,10 +450,22 @@ def dst_ip_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def filter_low_freq_port(port_counts, threshold):
+    """
+    filters low frequency ports (ports that weren't used a lot)
+    :param port_counts:
+    :param threshold:
+    :return:
+    """
     # makes sure the port count must appear at least threshold times
     return port_counts[port_counts >= threshold]
 
 def src_port_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    a bar graph based on the source ports
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     ports_counts = []
     threshold = 100
     for df in dfs:
@@ -344,6 +483,12 @@ def src_port_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 def dst_port_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
+    """
+    a bar graph based on the destination ports
+    :param dfs:
+    :param df_names:
+    :return:
+    """
     ports_counts = []
     threshold = 100
     for df in dfs:
@@ -356,6 +501,72 @@ def dst_port_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
         axes[i].set_xlabel("Destination Port")
         axes[i].set_ylabel("Count")
         axes[i].tick_params(axis='x', labelrotation=45)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def packet_number_over_time_q4(df: pd.DataFrame):
+    """
+    Graph for q4 related to amount of packets over time
+    :param df:
+    :return:
+    """
+    # create fig
+    fig, ax = plt.subplots(figsize=(10, 5))
+    df['entry_count'] = range(1, len(df) + 1)  # cumulative count
+
+    ax.fill_between(df['timestamp'], df['entry_count'], color='blue', alpha=0.3)
+    ax.plot(df['timestamp'], df['entry_count'], color='blue')
+    ax.set_title("Amount of Packets over time [Q4 graph]")
+    ax.set_xlabel("time [s]")
+    ax.set_ylabel("amount of packets [N]")
+
+    plt.tight_layout()
+    plt.show()
+
+
+def packet_length_distribution_q4(df: pd.DataFrame):
+    """
+    Graph for q4 related to size of packets over time
+    :param df:
+    :return:
+    """
+    fig, ax = plt.subplots(figsize=(8, 5))
+    # using the log function on the data to remove the tail
+    sns.kdeplot(np.log1p(df['packet_length']), color='blue', label="q4 graph", ax=ax, alpha=0.6)
+
+    ax.set_xlabel("ln(Packet Length+1)")
+    ax.set_ylabel("Density")
+    ax.set_title("Packet Size Distribution")
+    ax.legend()
+    plt.show()
+
+def filter_low_freq_tuple(tuple_counts, threshold):
+    """
+    removes low frequency tuples
+    :param tuple_counts:
+    :param threshold:
+    :return:
+    """
+    # makes sure the tuple count must appear at least threshold times
+    return tuple_counts[tuple_counts >= threshold]
+
+def four_tuple_freq_q4(df: pd.DataFrame):
+    """
+    Graph for q4 related to the 4-tuple frequency
+    :param df:
+    :return:
+    """
+    threshold = 50
+    tuple_counts=filter_low_freq_tuple(df['four_tuple'].value_counts(), threshold)
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    tuple_counts.plot(kind='bar', ax=ax, color='blue')
+    ax.set_title("4-tuple Frequency [Q4 graph]")
+    ax.set_xlabel("4-tuple")
+    ax.set_ylabel("Count")
+    ax.tick_params(axis='x', labelrotation=45)
 
     plt.tight_layout()
     plt.show()
@@ -444,7 +655,7 @@ def run_statistics():
         try:
             answer = int(input("which graph would you like to see next? (enter 1-12, 0 to end)"))
             if answer == 0: # quiting
-                print("closing program...")
+                print("closing statistics")
                 return
             elif answer == 1: # Packet Amount over Time
                 packet_number_over_time(dfs, df_names)
@@ -477,6 +688,46 @@ def run_statistics():
         except IndexError:
             print("Please enter number between 1 and 12 (or 0 to quit).")
 
+def display_q4_options():
+    """
+    This function is used for the possible graphs related to q4
+    :return:
+    """
+    print("The following graphs are available:")
+    print("1. Packet Amount over Time")
+    print("2. Packet Size Distribution")
+    print("3. 4-Tuple Frequency")
+
+def run_q4():
+    """
+    This function lets you pick between graphs using all 3 fields relevant to question 4
+    or just packet size and timestamp
+    :return:
+    """
+    df = pd.read_csv("WiresharkRecordingSpecialCSV/q4.csv")
+    df = df.drop(columns=['Unnamed: 0'], errors="ignore")  # index col is duplicated
+    df = move_timestamp_to_zero(df) # moves timestamps to start from 0
+    display_q4_options()
+
+    while True:
+        try:
+            answer = int(input("which graph would you like to see next? (enter 1-3, 0 to end)"))
+            if answer == 0: # quiting
+                print("closing q4...")
+                return
+            if answer == 1:
+                packet_number_over_time_q4(df)
+            elif answer == 2:
+                packet_length_distribution_q4(df)
+            elif answer == 3:
+                four_tuple_freq_q4(df)
+            else: # invalid answer
+                raise IndexError
+        except ValueError:
+            print("Please enter a valid number.")
+        except IndexError:
+            print("Please enter number between 1 and 3 (or 0 to quit).")
+
 
 def main():
     print("Hello,")
@@ -490,8 +741,28 @@ def main():
     if answer == "y":
         create_csv_from_pcapngs()
 
-    # run graph function chooser
-    run_statistics()
+    while True:
+        print("Press 1 to view graphs related to questions 1-3, press 2 for graphs related to question 4,")
+        print("press 0 to quit:")
+        answer = str(input())
+
+        # making sure input is correct
+        while answer != '0' and answer != '1' and answer != '2':
+            answer = str(input("please enter 1 or 2, or 0 to quit: "))
+
+        # chosing correct option
+        if answer == '0':
+            print("Closing program...")
+            break
+
+        if answer == '1':
+            # run graph function chooser
+            run_statistics()
+
+        if answer == '2':
+            # run functions related to q4
+            run_q4()
+
 
 
 if __name__ == "__main__":
