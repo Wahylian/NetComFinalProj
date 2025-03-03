@@ -38,5 +38,5 @@ To run every function of the python file just run the program and chose the want
 * Another solution is, attempt to roll matplotlib back to versions 3.7.0 or 3.5.3 <br/>
 2. Our LinkedIn Profiles are:
 * Ido: https://www.linkedin.com/in/ido-ron-35b606354 <br/>
-* Shachar: <br/>
+* Shachar: http://www.linkedin.com/in/shacharts-undefined-38a600354 <br/>
 * Lidor: https://www.linkedin.com/in/lidor-ayhoni-a71826266
