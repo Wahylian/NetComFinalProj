@@ -2,7 +2,7 @@
 <h3>By: Ido, Shachar and Lidor</h3>
 <br/>
 <h2>What is in the file:</h2>
-1. A pdf with detailed answers for each of the proposed questions.<br/>
+1. A pdf with detailed answers for each of the proposed questions: 'Final Project ComNet.pdf'.<br/>
 2. src folder with the following:<br/>
    a. a folder with 7 csv files for each of the 5 wireshark sniffs used in part 3 questions 1 to 3, and a csv related to question 4, and one related to the bonus question-
       This folder is called 'WiresharkRecordingSpecialCSV'.<br/>
