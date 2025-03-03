@@ -8,7 +8,7 @@
    and the ability to generate the csv files from the original pcapng files<br/>
 3. a link to the original pcapng files, which you will have to download from google drive, as they are too heavy to upload to github even when compressed:<br/>
    the link is: https://drive.google.com/drive/folders/1aF9--1N4EBlxPKddHXaTYQeovzDNOXpL?usp=sharing<br/>
-4. a folder with a png of each plot
+4. a folder with a png of each plot, and a pdf file with the explanation about which option in the code will produce which plot.
 
 <h2>Instructions to run the code:</h2>
 To run every function of the python file just run the program and chose the wanted option.
