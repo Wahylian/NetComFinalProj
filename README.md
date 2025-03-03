@@ -22,7 +22,7 @@ To run every function of the python file just run the program and chose the want
 <h2>Setup instructions for pcapng files - DO BEFORE RUNNING THE PROGRAM FOR THE FIRST TIME</h2>
 1. download the the files from: https://drive.google.com/drive/folders/1aF9--1N4EBlxPKddHXaTYQeovzDNOXpL?usp=sharing<br/>
 2. in the folder where you have main.py and WiresharkRecordingSpecialCSV, create a folder called: 'WiresharkRecordings'<br/>
-3. enter that folder and place the 5 pcapng recordings<br/>
+3. enter that folder and place the 6 pcapng recordings<br/>
 4. run the code :)
 
 <h2>Notes:</h2>
