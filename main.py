@@ -211,12 +211,19 @@ def create_csv_from_pcapngs():
     zoom_df = create_df(zoom_pcap)
     save_to_csv(zoom_df, "zoom")
 
-    # getting the recording for Question 4 Set up:
+    # getting the recording for Question 4 set up:
     print("Creating Q4 Recording and saving it...")
     q4_pcap = ps.FileCapture("WiresharkRecordings/Q4Traffic.pcapng")
     # creating the special dataframe
     q4_df = create_special_df(q4_pcap)
     save_to_csv(q4_df, "q4")
+
+    # getting the recording for the Bonus Question set up:
+    print("Creating Bonus Question Recording and saving it...")
+    bq_pcap = ps.FileCapture("WiresharkRecordings/BonusTraffic.pcapng")
+    # creating the special dataframe
+    bq_df = create_special_df(bq_pcap)
+    save_to_csv(bq_df, "bq")
 
 
 def packet_number_over_time(dfs:list[pd.DataFrame], df_names: list[str]):
@@ -506,10 +513,11 @@ def dst_port_bar_graph(dfs: list[pd.DataFrame], df_names: list[str]):
     plt.show()
 
 
-def packet_number_over_time_q4(df: pd.DataFrame):
+def packet_number_over_time_extra(df: pd.DataFrame, df_name: str):
     """
-    Graph for q4 related to amount of packets over time
+    Graph for q4 or bonus question related to amount of packets over time
     :param df:
+    :param df_name:
     :return:
     """
     # create fig
@@ -518,7 +526,7 @@ def packet_number_over_time_q4(df: pd.DataFrame):
 
     ax.fill_between(df['timestamp'], df['entry_count'], color='blue', alpha=0.3)
     ax.plot(df['timestamp'], df['entry_count'], color='blue')
-    ax.set_title("Amount of Packets over time [Q4 graph]")
+    ax.set_title(f"Amount of Packets over time [{df_name} graph]")
     ax.set_xlabel("time [s]")
     ax.set_ylabel("amount of packets [N]")
 
@@ -526,15 +534,16 @@ def packet_number_over_time_q4(df: pd.DataFrame):
     plt.show()
 
 
-def packet_length_distribution_q4(df: pd.DataFrame):
+def packet_length_distribution_extra(df: pd.DataFrame, df_name: str):
     """
-    Graph for q4 related to size of packets over time
+    Graph for q4 or bonus question related to size of packets over time
     :param df:
+    :param df_name:
     :return:
     """
     fig, ax = plt.subplots(figsize=(8, 5))
     # using the log function on the data to remove the tail
-    sns.kdeplot(np.log1p(df['packet_length']), color='blue', label="q4 graph", ax=ax, alpha=0.6)
+    sns.kdeplot(np.log1p(df['packet_length']), color='blue', label=f"{df_name} graph", ax=ax, alpha=0.6)
 
     ax.set_xlabel("ln(Packet Length+1)")
     ax.set_ylabel("Density")
@@ -552,10 +561,11 @@ def filter_low_freq_tuple(tuple_counts, threshold):
     # makes sure the tuple count must appear at least threshold times
     return tuple_counts[tuple_counts >= threshold]
 
-def four_tuple_freq_q4(df: pd.DataFrame):
+def four_tuple_freq_extra(df: pd.DataFrame, df_name: str):
     """
-    Graph for q4 related to the 4-tuple frequency
+    Graph for q4 or bonus question related to the 4-tuple frequency
     :param df:
+    :param df_name:
     :return:
     """
     threshold = 50
@@ -563,7 +573,7 @@ def four_tuple_freq_q4(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     tuple_counts.plot(kind='bar', ax=ax, color='blue')
-    ax.set_title("4-tuple Frequency [Q4 graph]")
+    ax.set_title(f"4-tuple Frequency [{df_name} graph]")
     ax.set_xlabel("4-tuple")
     ax.set_ylabel("Count")
     ax.tick_params(axis='x', labelrotation=45)
@@ -688,9 +698,9 @@ def run_statistics():
         except IndexError:
             print("Please enter number between 1 and 12 (or 0 to quit).")
 
-def display_q4_options():
+def display_extra_options():
     """
-    This function is used for the possible graphs related to q4
+    This function is used for the possible graphs related to q4 and the bonus question
     :return:
     """
     print("The following graphs are available:")
@@ -698,29 +708,36 @@ def display_q4_options():
     print("2. Packet Size Distribution")
     print("3. 4-Tuple Frequency")
 
-def run_q4():
+def run_extra_stats(csv_name: str):
     """
-    This function lets you pick between graphs using all 3 fields relevant to question 4
-    or just packet size and timestamp
+    This function lets you pick between graphs of all 3 fields relevant to question 4 and the bonus question
+    :param csv_name: the name of the csv file (without .csv extension)
     :return:
     """
-    df = pd.read_csv("WiresharkRecordingSpecialCSV/q4.csv")
+    df = pd.read_csv(f"WiresharkRecordingSpecialCSV/{csv_name}.csv")
     df = df.drop(columns=['Unnamed: 0'], errors="ignore")  # index col is duplicated
     df = move_timestamp_to_zero(df) # moves timestamps to start from 0
-    display_q4_options()
+    display_extra_options()
+
+    if csv_name == "q4":
+        print("displaying for Q4 related Traffic")
+    elif csv_name == "bq":
+        print("displaying for the Bonus Question's Traffic")
+    else:
+        raise ValueError("Invalid csv name")
 
     while True:
         try:
             answer = int(input("which graph would you like to see next? (enter 1-3, 0 to end)"))
             if answer == 0: # quiting
-                print("closing q4...")
+                print(f"closing {csv_name}...")
                 return
             if answer == 1:
-                packet_number_over_time_q4(df)
+                packet_number_over_time_extra(df, csv_name)
             elif answer == 2:
-                packet_length_distribution_q4(df)
+                packet_length_distribution_extra(df, csv_name)
             elif answer == 3:
-                four_tuple_freq_q4(df)
+                four_tuple_freq_extra(df, csv_name)
             else: # invalid answer
                 raise IndexError
         except ValueError:
@@ -742,15 +759,15 @@ def main():
         create_csv_from_pcapngs()
 
     while True:
-        print("Press 1 to view graphs related to questions 1-3, press 2 for graphs related to question 4,")
+        print("Press 1 to view graphs related to questions 1-3, press 2 for graphs related to question 4, 3 for bonus question's graphs")
         print("press 0 to quit:")
         answer = str(input())
 
         # making sure input is correct
-        while answer != '0' and answer != '1' and answer != '2':
+        while answer != '0' and answer != '1' and answer != '2' and answer != '3':
             answer = str(input("please enter 1 or 2, or 0 to quit: "))
 
-        # chosing correct option
+        # choosing correct option
         if answer == '0':
             print("Closing program...")
             break
@@ -761,7 +778,11 @@ def main():
 
         if answer == '2':
             # run functions related to q4
-            run_q4()
+            run_extra_stats("q4")
+
+        if answer == '3':
+            # run functions related to the bonus question
+            run_extra_stats("bq")
 
 
 
