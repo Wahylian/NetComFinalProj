@@ -19,6 +19,19 @@ https://github.com/Wahylian/NetComFinalProj.git<br/>
 4. create a folder called 'WiresharkRecordingSpecialCSV' in the /src/ folder, this folder will house the csv files the program creates
 5. run the code :)
 
+<h2>Pcapng File Format:</h2>
+The code will not run unless the following pcap file names are present, as well as if the folder 'WirehsharkRecordings' that houses them doesn't exist:<br/>
+1. 'ChromeRecordingFiltered.pcapng'<br/>
+2. 'FirefoxRecordingFiltered.pcapng'<br/>
+3. 'SpotifyRecordingFiltered.pcapng'<br/>
+4. 'YoutubeRecordingFiltered.pcapng'<br/>
+5. 'ZoomRecordingFiltered.pcapng'<br/>
+6. 'Q4Traffic.pcapng'<br/>
+7. 'BonusTraffic.pcapng'<br/>
+The first 5 pcap files are for questions 1-3, number 6 is for question 4, and 7 is for the bonus question.<br/>
+If you want to run any other pcap files, they must have one of the names mentioned above and replace that file.<br/>
+The csv file created from the pcap file will have a correlating name.<br/>
+
 <h2>Instructions to run the code:</h2>
 To run every function of the python file just run the program and chose the wanted option.<br/>
 <h4>Note- If the csv files are not present, choose y before attempting to plot the graphs, this will create the required csv files</h4>
@@ -31,7 +44,7 @@ To run every function of the python file just run the program and chose the want
 5. seaborn<br/>
 6. os<br/>
 
-<h2>Notes and Additiona Information:</h2>
+<h2>Notes and Additional Information:</h2>
 1. Matplotlib might cause some issues on windows when attempting to run the code, there are multiple solutions we found on the web:<br/>
 * The simplest solution is, in Pycharm go to File | Settings | Tools | Python Plots | Show plots in tool window and disable that.<br/>
    Though it might break the look of the plots a bit as they could get smudged when they are not shown inside of the pycharm interface<br/>
@@ -41,9 +54,3 @@ To run every function of the python file just run the program and chose the want
 * Ido: https://www.linkedin.com/in/ido-ron-35b606354 <br/>
 * Shachar: http://www.linkedin.com/in/shacharts-undefined-38a600354 <br/>
 * Lidor: https://www.linkedin.com/in/lidor-ayhoni-a71826266 <br/>
-3. 2 Hours before the Deadline we were notified that the code must be able to run whatever pcap files you will provide.<br/>
-This was not stated in the original project instructions.<br/>
-And so we did not have that functionability, in order to add that we will need to rewrite the entire code for to desplay a graph for just a specific file and to allow inputs from the path to the pcap files.<br/>
-As well as change our answer sheet in the pdf. <br/>
-Because of this, we did not add that capability, the code will run only with all the pcap files in the google drive present and only for those specific pcap files.<br/>
-We understand this is not the what was required of us, but with only 2 hours to do these changes, we did not have the time.<br/>
