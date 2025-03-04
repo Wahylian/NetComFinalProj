@@ -12,7 +12,7 @@ https://github.com/Wahylian/NetComFinalProj.git<br/>
    a. a png of each plot created in the program.<br/>
    b. and a pdf file called 'PlotsDictionary.pdf' with the explanation about which option in the code will produce which plot .<br/>
 
-<h2>Setup instructions for pcapng files - DO BEFORE RUNNING THE PROGRAM</h2>
+<h2>Setup Instructions for Code - DO BEFORE RUNNING THE PROGRAM - otherwise it will not run</h2>
 1. download the the files from: https://drive.google.com/drive/folders/1aF9--1N4EBlxPKddHXaTYQeovzDNOXpL?usp=sharing<br/>
 2. in the folder (the folder named /src/) where you have main.py and WiresharkRecordingSpecialCSV, create a folder called: 'WiresharkRecordings'<br/>
 3. enter that folder and place the 7 pcapng recordings<br/>
@@ -40,4 +40,10 @@ To run every function of the python file just run the program and chose the want
 2. Our LinkedIn Profiles are:<br/>
 * Ido: https://www.linkedin.com/in/ido-ron-35b606354 <br/>
 * Shachar: http://www.linkedin.com/in/shacharts-undefined-38a600354 <br/>
-* Lidor: https://www.linkedin.com/in/lidor-ayhoni-a71826266
+* Lidor: https://www.linkedin.com/in/lidor-ayhoni-a71826266 <br/>
+3. 2 Hours before the Deadline we were notified that the code must be able to run whatever pcap files you will provide.<br/>
+This was not stated in the original project instructions.<br/>
+And so we did not have that functionability, in order to add that we will need to rewrite the entire code for to desplay a graph for just a specific file and to allow inputs from the path to the pcap files.<br/>
+As well as change our answer sheet in the pdf. <br/>
+Because of this, we did not add that capability, the code will run only with all the pcap files in the google drive present and only for those specific pcap files.<br/>
+We understand this is not the what was required of us, but with only 2 hours to do these changes, we did not have the time.<br/>
