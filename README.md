@@ -12,7 +12,7 @@ https://github.com/Wahylian/NetComFinalProj.git<br/>
    a. a png of each plot created in the program.<br/>
    b. and a pdf file called 'PlotsDictionary.pdf' with the explanation about which option in the code will produce which plot .<br/>
 
-<h2>Setup Instructions for Code - DO BEFORE RUNNING THE PROGRAM - otherwise it will not run</h2>
+<h2>Setup Instructions for Code - DO BEFORE RUNNING THE PROGRAM</h2>
 1. download the the files from: https://drive.google.com/drive/folders/1aF9--1N4EBlxPKddHXaTYQeovzDNOXpL?usp=sharing<br/>
 2. in the folder (the folder named /src/) where you have main.py and WiresharkRecordingSpecialCSV, create a folder called: 'WiresharkRecordings'<br/>
 3. enter that folder and place the 7 pcapng recordings<br/>
@@ -20,7 +20,7 @@ https://github.com/Wahylian/NetComFinalProj.git<br/>
 5. run the code :)
 
 <h2>Pcapng File Format:</h2>
-The code will not run unless the following pcap file names are present, as well as if the folder 'WirehsharkRecordings' that houses them doesn't exist:<br/>
+The code will not allow to produce the csv files and the plots unless the following pcap file names are present, as well as if the folder 'WirehsharkRecordings' that houses them doesn't exist:<br/>
 1. 'ChromeRecordingFiltered.pcapng'<br/>
 2. 'FirefoxRecordingFiltered.pcapng'<br/>
 3. 'SpotifyRecordingFiltered.pcapng'<br/>
